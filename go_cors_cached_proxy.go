@@ -50,9 +50,7 @@ func get_news(key string, topic string) {
 			fmt.Printf("%s is removed because of duplication\n", s)
 			continue
 		}
-		cachemap[key].setRing(cachemap[key].ring.Prev())
-		//cachemap[key].ring = cachemap[key].ring.Prev()
-		cachemap[key].ring.Value = s
+		cachemap[key].addRing(s)
 		fmt.Println(s)
 	}
 }
@@ -66,19 +64,20 @@ type CacheItem struct {
 	ring  *ring.Ring
 }
 
-func (cacheItem CacheItem) setRing(newring *ring.Ring) {
-	cacheItem.ring = newring
+func (cacheItem *CacheItem) addRing(value interface{}) {
+	cacheItem.ring = cacheItem.ring.Prev()
+	cacheItem.ring.Value = value
 }
 
-var cachemap = map[string]CacheItem{
-	"prim": CacheItem{"", ring.New(10)},
-	"soc":  CacheItem{"y", ring.New(10)},
-	"pol":  CacheItem{"p", ring.New(10)},
-	"eco":  CacheItem{"b", ring.New(10)},
-	"int":  CacheItem{"w", ring.New(10)},
-	"cul":  CacheItem{"l", ring.New(10)},
-	"cel":  CacheItem{"e", ring.New(10)},
-	"sci":  CacheItem{"t", ring.New(10)},
+var cachemap = map[string]*CacheItem{
+	"prim": &CacheItem{"", ring.New(10)},
+	"soc":  &CacheItem{"y", ring.New(10)},
+	"pol":  &CacheItem{"p", ring.New(10)},
+	"eco":  &CacheItem{"b", ring.New(10)},
+	"int":  &CacheItem{"w", ring.New(10)},
+	"cul":  &CacheItem{"l", ring.New(10)},
+	"cel":  &CacheItem{"e", ring.New(10)},
+	"sci":  &CacheItem{"t", ring.New(10)},
 }
 
 var cacheready bool = false

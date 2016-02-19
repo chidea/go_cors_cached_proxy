@@ -109,11 +109,6 @@ func main() {
 	}
 }
 
-type JSONnews struct {
-	Section string
-	News    string
-}
-
 func newshandler(w http.ResponseWriter, r *http.Request) {
 	ori := r.Header.Get("Origin")
 	w.Header().Set("Access-Control-Allow-Origin", ori)

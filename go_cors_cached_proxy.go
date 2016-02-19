@@ -90,9 +90,7 @@ func (cacheItem *CacheItem) addRing(value interface{}) {
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU()) // use all physical cores
 
-	http.HandleFunc("/", handler)
 	http.HandleFunc("/news", newshandler)
-	http.HandleFunc("/weather", newshandler)
 	go http.ListenAndServe(":81", nil)
 
 	for {
@@ -109,11 +107,6 @@ func main() {
 		} */
 		time.Sleep(15 * time.Minute)
 	}
-}
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	fmt.Fprintf(w, "Got tired of life? Want some fun? Contact me instead of hacking hospitals : sbw228@gmail.com")
 }
 
 type JSONnews struct {

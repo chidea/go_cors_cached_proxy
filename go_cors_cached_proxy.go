@@ -33,7 +33,13 @@ func get_news(key string, topic string) {
 	_ = xml.Unmarshal(b, &v)
 	for i, _ := range v.Titles { // reverse
 		t := v.Titles[len(v.Titles)-1-i]
-		s := c.FindAllStringSubmatch(t, -1)[0][1]
+		st := c.FindAllStringSubmatch(t, -1)
+		var s string
+		if st == nil {
+			s = t
+		} else {
+			s = st[0][1]
+		}
 		//fmt.Println(s)
 		dup := false
 		for _, v := range cachemap {

@@ -135,9 +135,4 @@ func newshandler(w http.ResponseWriter, r *http.Request) {
 	}
 	json.NewEncoder(w).Encode(m)
 	log.Printf("%s is retrieving cache\n", r.Host)
-	/*for _, v := range cachemap {
-		v.ring.Do(func(o interface{}) {
-
-		})
-	}*/
 }

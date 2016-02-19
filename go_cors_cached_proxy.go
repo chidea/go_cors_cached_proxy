@@ -70,14 +70,15 @@ func (cacheItem *CacheItem) addRing(value interface{}) {
 }
 
 var cachemap = map[string]*CacheItem{
-	"prim": &CacheItem{"", ring.New(10)},
-	"soc":  &CacheItem{"y", ring.New(10)},
-	"pol":  &CacheItem{"p", ring.New(10)},
-	"eco":  &CacheItem{"b", ring.New(10)},
-	"int":  &CacheItem{"w", ring.New(10)},
-	"cul":  &CacheItem{"l", ring.New(10)},
-	"cel":  &CacheItem{"e", ring.New(10)},
-	"sci":  &CacheItem{"t", ring.New(10)},
+	"top":           &CacheItem{"", ring.New(10)},
+	"world":         &CacheItem{"w", ring.New(10)},
+	"US":            &CacheItem{"n", ring.New(10)},
+	"business":      &CacheItem{"b", ring.New(10)},
+	"technology":    &CacheItem{"t", ring.New(10)},
+	"entertainment": &CacheItem{"e", ring.New(10)},
+	"sports":        &CacheItem{"s", ring.New(10)},
+	"science":       &CacheItem{"snc", ring.New(10)},
+	"health":        &CacheItem{"m", ring.New(10)},
 }
 
 var cacheready bool = false

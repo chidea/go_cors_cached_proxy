@@ -14,6 +14,27 @@ import (
 	"time"
 )
 
+type RSSResult struct {
+	XMLName xml.Name `xml:"rss"`
+	Titles  []string `xml:"channel>item>title"`
+}
+type CacheItem struct {
+	topic string
+	ring  *ring.Ring
+}
+
+var cachemap = map[string]*CacheItem{
+	"top":           &CacheItem{"", ring.New(10)},
+	"world":         &CacheItem{"w", ring.New(10)},
+	"US":            &CacheItem{"n", ring.New(10)},
+	"business":      &CacheItem{"b", ring.New(10)},
+	"technology":    &CacheItem{"t", ring.New(10)},
+	"entertainment": &CacheItem{"e", ring.New(10)},
+	"sports":        &CacheItem{"s", ring.New(10)},
+	"science":       &CacheItem{"snc", ring.New(10)},
+	"health":        &CacheItem{"m", ring.New(10)},
+}
+
 func check(e error) {
 	if e != nil {
 		panic(e)
@@ -61,33 +82,10 @@ func get_news(key string, topic string) {
 	}
 }
 
-type RSSResult struct {
-	XMLName xml.Name `xml:"rss"`
-	Titles  []string `xml:"channel>item>title"`
-}
-type CacheItem struct {
-	topic string
-	ring  *ring.Ring
-}
-
 func (cacheItem *CacheItem) addRing(value interface{}) {
 	cacheItem.ring = cacheItem.ring.Prev()
 	cacheItem.ring.Value = value
 }
-
-var cachemap = map[string]*CacheItem{
-	"top":           &CacheItem{"", ring.New(10)},
-	"world":         &CacheItem{"w", ring.New(10)},
-	"US":            &CacheItem{"n", ring.New(10)},
-	"business":      &CacheItem{"b", ring.New(10)},
-	"technology":    &CacheItem{"t", ring.New(10)},
-	"entertainment": &CacheItem{"e", ring.New(10)},
-	"sports":        &CacheItem{"s", ring.New(10)},
-	"science":       &CacheItem{"snc", ring.New(10)},
-	"health":        &CacheItem{"m", ring.New(10)},
-}
-
-var cacheready bool = false
 
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU()) // use all physical cores

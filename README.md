@@ -3,6 +3,7 @@ CORS proxy that caches google news feeds with duplication checks into JSON
 
 ## How to use
   Run with `go run go_cors_cached_proxy` or `go install && go_cors_cached_proxy` (when path contains $GOPATH/bin directory).
+
   Try AJAX call on `localhost:81`. To try it with jQuery, `$.getJSON('http://localhost:81/news', function(d){window.d=d;})`
 
 ## How to change language

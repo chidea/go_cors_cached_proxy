@@ -1,8 +1,16 @@
 # go_cors_cached_proxy
 CORS proxy that caches google news feeds with duplication checks into JSON
 
+### Features
+  - Gets news feed from [Google News](news.google.com) as RSS(XML) and converts it to JSON.
+  - RSS filtering discards any description and images but headlines.
+  - Additional string filtering to discard source company (in form of `Headline - Company`) if needed.
+  - Interval based buffering which doesn't make burst of GETs to Google server to show news.
+  - Ring buffer based updates. By default, google news feeds sends up to 10 newses at a time, and this server does so too.
+  - CORS header is added to let client request from Cross-Origin. Useful when you use local webpage in some kiosk.
+
 ## How to use
-  Run with `go run go_cors_cached_proxy` or `go install && go_cors_cached_proxy` (when path contains $GOPATH/bin directory).
+  Run with `go run go_cors_cached_proxy.go` or `go install && go_cors_cached_proxy` (when path contains $GOPATH/bin directory).
 
   Try AJAX call on `localhost:81/news`. To try it with jQuery, `$.getJSON('http://localhost:81/news', function(d){window.d=d;})`
   

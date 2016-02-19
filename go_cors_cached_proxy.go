@@ -34,6 +34,7 @@ var cachemap = map[string]*CacheItem{
 	"science":       &CacheItem{"snc", ring.New(10)},
 	"health":        &CacheItem{"m", ring.New(10)},
 }
+var cache = make([]byte, 1)
 
 func check(e error) {
 	if e != nil {
@@ -98,7 +99,7 @@ func main() {
 		for k, v := range cachemap {
 			get_news(k, v.topic)
 		}
-
+		update_cache()
 		/* //debug purpose code
 		for k, v := range cachemap {
 			v.ring.Do(func(o interface{}) {
@@ -109,10 +110,7 @@ func main() {
 	}
 }
 
-func newshandler(w http.ResponseWriter, r *http.Request) {
-	ori := r.Header.Get("Origin")
-	w.Header().Set("Access-Control-Allow-Origin", ori)
-	w.Header().Set("Access-Control-Allow-Methods", "GET")
+func update_cache() {
 	m := make(map[string][]string)
 	for k, v := range cachemap {
 		v.ring.Do(func(o interface{}) {
@@ -121,6 +119,14 @@ func newshandler(w http.ResponseWriter, r *http.Request) {
 			}
 		})
 	}
-	json.NewEncoder(w).Encode(m)
+	cache, _ = json.Marshal(m)
+}
+
+func newshandler(w http.ResponseWriter, r *http.Request) {
+	ori := r.Header.Get("Origin")
+	w.Header().Set("Access-Control-Allow-Origin", ori)
+	w.Header().Set("Access-Control-Allow-Methods", "GET")
+	//json.NewEncoder(w).Encode(m)
 	log.Printf("%s is retrieving cache\n", r.RemoteAddr)
+	w.Write(cache)
 }

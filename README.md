@@ -18,7 +18,7 @@ CORS proxy that caches google news feeds with duplication checks into JSON
   Note that it listens on `0.0.0.0` which means you instantly go public with running it.
 
 ## How to change language
-  Open news.google.com with browser and check your final URL on browser with different language/country settings.
+  Open news.google.com with browser and check your final URL of RSS feed on bottom of page with different language/country settings.
   Lanuage is specified with `hl` and country is with `ned`.
   Set this to `rssurl` variable in first line of `func get_news`.
 

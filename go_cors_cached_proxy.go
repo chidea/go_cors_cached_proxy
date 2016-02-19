@@ -21,7 +21,7 @@ func check(e error) {
 }
 
 func get_news(key string, topic string) {
-	rssurl := "https://news.google.co.kr/news?pz=1&cf=all&ned=kr&hl=en&output=rss&topic=" + topic
+	rssurl := "https://news.google.co.kr/news?pz=1&cf=all&ned=us&hl=en&output=rss&topic=" + topic
 	log.Printf("Getting news to cachemap[%s] from %s\n", key, rssurl)
 	r, _ := http.Get(rssurl)
 	defer r.Body.Close()
@@ -96,12 +96,13 @@ func main() {
 			get_news(k, v.topic)
 		}
 
+		/* //debug purpose code
 		for k, v := range cachemap {
 			v.ring.Do(func(o interface{}) {
 				fmt.Println("cache", k, ":", o)
 			})
-		}
-		time.Sleep(3 * time.Minute)
+		} */
+		time.Sleep(15 * time.Minute)
 	}
 }
 

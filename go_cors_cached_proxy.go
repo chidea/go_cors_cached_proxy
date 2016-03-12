@@ -34,7 +34,7 @@ var cachemap = map[string]*CacheItem{
 	"science":       &CacheItem{"snc", ring.New(10)},
 	"health":        &CacheItem{"m", ring.New(10)},
 }
-var cache = make([]byte, 1)
+var cache = make([]byte, 1) // final json string output cache
 
 func check(e error) {
 	if e != nil {
@@ -42,24 +42,29 @@ func check(e error) {
 	}
 }
 
-func get_news(key string, topic string) {
+var title_company_filter = regexp.MustCompile("(.+) - [^-]+$") // regex to remove '- company' trail
+
+func get_news(key string, topic string) bool {
 	rssurl := "https://news.google.com/news?pz=1&cf=all&ned=us&hl=en&output=rss&topic=" + topic
 	log.Printf("Getting news to cachemap[%s] from %s\n", key, rssurl)
 	r, _ := http.Get(rssurl)
+	if r == nil {
+		log.Println("Unable to get news") // Probably the network is down
+		return false
+	}
 	defer r.Body.Close()
 	b, _ := ioutil.ReadAll(r.Body)
 	//ioutil.WriteFile("news.xml", b, 0666) // write rss to disk
-	c := regexp.MustCompile("(.+) - [^-]+$")
 	//d, _ := xml.NewDecoder(r.Body)
 	v := RSSResult{}
-	_ = xml.Unmarshal(b, &v)
+	_ = xml.Unmarshal(b, &v)     // Parse and filter to get titles only
 	for i, _ := range v.Titles { // reverse
 		t := v.Titles[len(v.Titles)-1-i]
-		st := c.FindAllStringSubmatch(t, -1)
+		st := title_company_filter.FindAllStringSubmatch(t, -1) // filter out '- company' in title
 		var s string
-		if st == nil {
+		if st == nil { // not filterable
 			s = t
-		} else {
+		} else { // filterable
 			s = st[0][1]
 		}
 		//fmt.Println(s)
@@ -75,12 +80,13 @@ func get_news(key string, topic string) {
 			})
 		}
 		if dup {
-			fmt.Printf("%s is removed because of duplication\n", s)
+			fmt.Printf("%s [duplicated and removed from buffer]\n", s)
 			continue
 		}
 		cachemap[key].addRing(s)
 		fmt.Println(s)
 	}
+	return true
 }
 
 func (cacheItem *CacheItem) addRing(value interface{}) {

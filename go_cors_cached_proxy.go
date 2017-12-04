@@ -24,15 +24,15 @@ type CacheItem struct {
 }
 
 var cachemap = map[string]*CacheItem{
-	"top":           &CacheItem{"", ring.New(10)},
-	"world":         &CacheItem{"w", ring.New(10)},
-	"US":            &CacheItem{"n", ring.New(10)},
-	"business":      &CacheItem{"b", ring.New(10)},
-	"technology":    &CacheItem{"t", ring.New(10)},
-	"entertainment": &CacheItem{"e", ring.New(10)},
-	"sports":        &CacheItem{"s", ring.New(10)},
-	"science":       &CacheItem{"snc", ring.New(10)},
-	"health":        &CacheItem{"m", ring.New(10)},
+	"tot": &CacheItem{"", ring.New(10)},
+	"pol": &CacheItem{"POLITICS", ring.New(10)},
+	"bus": &CacheItem{"BUSINESS", ring.New(10)},
+	"soc": &CacheItem{"NATION", ring.New(10)},
+	"lif": &CacheItem{"HEALTH", ring.New(10)},
+	"wor": &CacheItem{"WORLD", ring.New(10)},
+	"tec": &CacheItem{"SCITECH", ring.New(10)},
+	"ent": &CacheItem{"ENTERTAINMENT", ring.New(10)},
+	"spo": &CacheItem{"SPORTS", ring.New(10)},
 }
 var cache = make([]byte, 1) // final json string output cache
 
@@ -45,7 +45,11 @@ func check(e error) {
 var title_company_filter = regexp.MustCompile("(.+) - [^-]+$") // regex to remove '- company' trail
 
 func get_news(key string, topic string) bool {
-	rssurl := "https://news.google.com/news?pz=1&cf=all&ned=us&hl=en&output=rss&topic=" + topic
+	subdir := ""
+	if topic != "" {
+		subdir = "/section/topic/" + topic + ".ko_kr/"
+	}
+	rssurl := "https://news.google.com/news/rss/headlines" + subdir + "?ned=kr"
 	log.Printf("Getting news to cachemap[%s] from %s\n", key, rssurl)
 	r, _ := http.Get(rssurl)
 	if r == nil {
@@ -97,15 +101,21 @@ func (cacheItem *CacheItem) addRing(value interface{}) {
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU()) // use all physical cores
 
+	http.HandleFunc("/", roothandler)
 	http.HandleFunc("/news", newshandler)
 	go http.ListenAndServe(":81", nil)
 
 	for {
 		log.Println("Refreshing cachemap")
+		var r = false
 		for k, v := range cachemap {
-			get_news(k, v.topic)
+			if get_news(k, v.topic) {
+				r = true
+			}
 		}
-		update_cache()
+		if r {
+			update_cache()
+		}
 		/* //debug purpose code
 		for k, v := range cachemap {
 			v.ring.Do(func(o interface{}) {
@@ -126,6 +136,11 @@ func update_cache() {
 		})
 	}
 	cache, _ = json.Marshal(m)
+}
+
+func roothandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	fmt.Fprintf(w, "Got tired of life? Want some fun? Contact me instead of hacking hospitals : sbw228@gmail.com")
 }
 
 func newshandler(w http.ResponseWriter, r *http.Request) {

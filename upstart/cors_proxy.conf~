@@ -1,0 +1,11 @@
+description "TMI news cache service"
+author "Byoungwoo Song<sbw228@gmail.com>"
+
+console log
+start on syno.network.ready
+
+stop on runlevel [06]
+
+respawn
+
+exec /usr/bin/go_cors_cached_proxy_kor > /var/log/go_cors_cached_proxy_kor.log
